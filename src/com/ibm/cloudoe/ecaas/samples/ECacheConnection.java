@@ -43,6 +43,7 @@ public class ECacheConnection {
 	public static void initECaaS() {
 		
 		data = new HashMap();
+		keys = new ArrayList();
 
 	}
 
