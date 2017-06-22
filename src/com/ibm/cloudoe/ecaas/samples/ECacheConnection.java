@@ -22,8 +22,6 @@ import com.ibm.json.java.JSONObject;
 public class ECacheConnection {
 
 	// define session instance of ObjectGrid
-	private static Session ogSession;
-
 	// define temporary store grid entries keys
 	private static List<String> keys;
 
@@ -64,8 +62,7 @@ public class ECacheConnection {
 	 * @return
 	 * @throws ObjectGridException
 	 */
-	public static Object getData(String mapName, String key)
-			throws ObjectGridException {
+	public static Object getData(String mapName, String key) {
 		return data.get(key);
 	}
 
@@ -77,8 +74,7 @@ public class ECacheConnection {
 	 * @param newValue
 	 * @throws ObjectGridException
 	 */
-	public static void postData(String mapName, String key, String newValue)
-			throws ObjectGridException {
+	public static void postData(String mapName, String key, String newValue) {
 		data.put(key,newValue);
 		postKeyTemp(key);
 	}
@@ -90,8 +86,7 @@ public class ECacheConnection {
 	 * @param key
 	 * @throws ObjectGridException
 	 */
-	public static void deleteData(String mapName, String key)
-			throws ObjectGridException {
+	public static void deleteData(String mapName, String key) {
 		data.remove(key);
 		deleteKeyTemp(key);
 	}
@@ -103,12 +98,16 @@ public class ECacheConnection {
 	 * @return
 	 * @throws ObjectGridException
 	 */
-	public static List<ECache> getAllData(String mapName)
-			throws ObjectGridException {
-		ObjectMap map = ogSession.getMap(mapName);
+	public static List<ECache> getAllData(String mapName) {
 		keys = getAllKeys(keysMapName);
-		List<String> values = map.getAll(keys);
-		return getECaches(keys, values);
+	
+		List<ECache> res = new ArrayList<ECache>();
+		for (int i = 0; i < keys.size(); i++) {
+			String a = keys.get(i);
+			res.add(new ECache(keys.get(i), data.get(a)));
+		}
+
+		return res;
 	}
 
 	/**
@@ -118,9 +117,12 @@ public class ECacheConnection {
 	 * @return
 	 * @throws ObjectGridException
 	 */
-	public static List<String> getAllKeys(String mapName)
-			throws ObjectGridException {
-		data.keySet().addAll(keys);
+	public static List<String> getAllKeys(String mapName) {
+		
+		for (String key: data.keySet()) {
+			if (!keys.contains(key)) keys.add(key);
+		}
+		//data.keySet().addAll(keys);
 		return keys;
 	}
 
@@ -130,7 +132,7 @@ public class ECacheConnection {
 	 * @param key
 	 * @throws ObjectGridException
 	 */
-	private static void postKeyTemp(String key) throws ObjectGridException {
+	private static void postKeyTemp(String key) {
 		keys = getAllKeys(keysMapName);
 		if (!keys.contains(key))
 			keys.add(key);
@@ -142,7 +144,7 @@ public class ECacheConnection {
 	 * @param key
 	 * @throws ObjectGridException
 	 */
-	private static void deleteKeyTemp(String key) throws ObjectGridException {
+	private static void deleteKeyTemp(String key) {
 		keys = getAllKeys(keysMapName);
 		if (keys.contains(key))
 			keys.remove(key);
