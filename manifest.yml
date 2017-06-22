@@ -1,0 +1,10 @@
+applications:
+- services:
+  - Data Cache-iy
+  disk_quota: 1024M
+  host: chowWebCache
+  name: chowWebCache
+  path: cacheSampleJavaNativeAPIs.war
+  domain: mybluemix.net
+  instances: 1
+  memory: 512M
